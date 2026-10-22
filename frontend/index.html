@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUDDY App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="buddyli.JPG" alt="BUDDY Logo" class="cat-logo">
+            BUDDY App
+        </div>
+        <nav id="nav"></nav>
+    </header>
+
+    <main>
+        <!-- Role selection landing page -->
+        <section id="role-selection" class="section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="hero-tag">Find your buddy in shelters · show the world which shelter animals want to find a forever home and family</div>
+                    <h1>All animals should feel good!</h1>
+                    <p>Choose whether you want a forever buddy, or if you want to help your shelter buddies to find their lifelong home and family.</p>
+                    <div class="role-box">
+                        <div class="role">
+                            <div class="feature-icon">🏠</div>
+                            <h3>I can give a home!</h3>
+                            <p>Find a buddy that fits your specific lifestyle, while doing something good to this world!</p>
+                            <button class="primary" onclick="chooseRole('adopter')">Enter as Adopter</button>
+                        </div>
+                        <div class="role">
+                            <div class="feature-icon">🐾</div>
+                            <h3>I want to publish our shelter animals!</h3>
+                            <p>Help your animals by creating their nice profiles visible to potential adopters. Thank you for your good contribution!</p>
+                            <button class="primary" onclick="chooseRole('shelter')">Enter as Shelter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Home section -->
+        <section id="home" class="section">
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="hero-tag">BUDDY App · adoption matching</div>
+                    <h1>Find your right buddy 🐾</h1>
+                    <p>BUDDY App helps you discover animals looking for a forever home and family.</p>
+                    <button class="primary" onclick="showSection('profile')">Create My Adoption Profile</button>
+                </div>
+            </div>
+            <div class="feature-row">
+                <div class="feature"><div class="feature-icon">🐕</div><h3>Shelter animals</h3><p>Discover potential buddies waiting in animal shelters.</p></div>
+                <div class="feature"><div class="feature-icon">🏠</div><h3>Lifestyle matching</h3><p>Enter your lifestyle and wishes to find a suitable buddy.</p></div>
+                <div class="feature"><div class="feature-icon">❤️</div><h3>Contact the shelter</h3><p>Every animal profile keeps its shelter source available.</p></div>
+            </div>
+        </section>
+
+        <!-- Adoption Profile -->
+        <section id="profile" class="section">
+            <div class="form-card">
+                <h2>🏠 Future home of your Buddy</h2>
+                <p>To match you and your Buddy, this information can help to find the right one!</p>
+                
+                <div class="form-group">
+                    <label>Will Buddy have access to a garden/ green space/ nature?</label>
+                    <select id="garden"><option value="no">No</option><option value="yes">Yes</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Are other animals part of your family?</label>
+                    <select id="other_animals">
+                        <option value="no">No, I only want one</option>
+                        <option value="yes_dogs">Yes, dog(s)</option>
+                        <option value="yes_cats">Yes, cat(s)</option>
+                        <option value="yes_other">Yes, small animals/ other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Will Buddy live in more than 40qm?</label>
+                    <select id="large_home"><option value="no">Unfortunately not</option><option value="yes">Yes!</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Does Buddy need to like kids?</label>
+                    <select id="kids"><option value="no">No</option><option value="yes">Yes!</option></select>
+                </div>
+                <div class="form-group">
+                    <label>How many hours should Buddy be alone per day?</label>
+                    <select id="hours_away"><option value="0-4">0–4 hours</option><option value="4-8">4–8 hours</option><option value="8+">More than 8 hours</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Anything important to say?</label>
+                    <textarea id="free_text" placeholder="Note your lifestyle, requirements and wishes"></textarea>
+                </div>
+
+                <div class="payment-box">
+                    <h3>💳 Account-creation-one-time-fee</h3>
+                    <p>To ensure you are serious about adoption and to also do something good for animals, the account activation can be done via a 23 Euro contribution.</p>
+                    <div class="price-tag">Total amount: <strong>23,00 €</strong></div>
+                    
+                    <div class="demo-payment-methods">
+                        <p><em>(Demo-Mode)</em></p>
+                        <button type="button" class="secondary" onclick="processDemoPayment()">Demo-Payment (23,00 €) simulation</button>
+                    </div>
+                    <div id="paymentStatus" style="display:none; margin-top: 15px;"></div>
+                </div>
+
+                <button id="btnSaveProfile" class="primary" style="margin-top:20px;" onclick="saveProfile()" disabled>Create profile for 23,00 €</button>
+            </div>
+        </section>
+
+        <!-- Animals / Buddies Grid -->
+        <section id="pets" class="section">
+            <div class="page-heading"><h2>🐾 Buddies looking for a home</h2><p>Browse animals published by participating shelters.</p></div>
+            <div class="filters">
+                <select id="filterSize" onchange="renderPets()">
+                    <option value="">All sizes</option>
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                    <option value="large">Large</option>
+                </select>
+                <select id="filterSpecies" onchange="renderPets()">
+                    <option value="">All animals</option>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Other">Other</option>
+                </select>
+                <select id="filterAge" onchange="renderPets()">
+                    <option value="">Any age</option>
+                    <option value="young">0–3 years</option>
+                    <option value="adult">4–7 years</option>
+                    <option value="senior">8+ years</option>
+                </select>
+            </div>
+            <div id="petGrid" class="pet-grid"></div>
+        </section>
+
+        <!-- Favourites -->
+        <section id="favorites" class="section">
+            <div class="page-heading"><h2>⭐ My Favourite Buddies</h2><p>Your saved potential buddies.</p></div>
+            <div id="favoriteGrid" class="pet-grid"></div>
+        </section>
+
+        <!-- Shelters & Map Section -->
+        <section id="shelters" class="section">
+            <div class="page-heading"><h2>🏠 Animal Shelters</h2><p>Discover shelters participating in BUDDY App, helping their animals find a forever home.</p></div>
+            
+            <div style="margin-bottom: 25px;">
+                <h3>🏠 Shelters near you</h3>
+                <p>Find closest shelters here to give your Buddy a short journey home.</p>
+                <div id="map" style="height: 380px; width: 100%; border-radius: 12px; border: 1px solid #c7a96b; margin-top: 15px;"></div>
+            </div>
+
+            <div id="shelterGrid" class="shelter-grid"></div>
+        </section>
+
+        <!-- Shelter Dashboard -->
+        <section id="shelterDashboard" class="section">
+            <div class="page-heading"><h2>🐾 Shelter Dashboard</h2><p>Manage your shelter by publishing your animals so adopters can find them.</p></div>
+            <div class="dashboard">
+                <div class="stat"><strong id="animalCount">0</strong>Published animals</div>
+                <div class="stat"><strong>∞</strong>Potential adopters</div>
+            </div>
+            
+            <div class="form-card">
+                <h2>🏠 Shelter Profile</h2>
+                <div class="form-group"><label>Shelter name</label><input id="sName" placeholder="Your shelter name"></div>
+                <div class="form-group"><label>Email</label><input id="sEmail" type="email" placeholder="shelter@example.com"></div>
+                <div class="form-group"><label>Address</label><input id="sAddress" placeholder="Shelter address"></div>
+                <div class="form-group"><label>About your shelter</label><textarea id="sDescription" placeholder="Tell adopters about your shelter..."></textarea></div>
+                <button class="primary" onclick="saveShelter()">Save Shelter Profile</button>
+            </div>
+            
+            <div class="form-card animal-admin">
+                <h2>🐕 Add Animal</h2>
+                <div class="form-group">
+                    <label>Animal photo</label>
+                    <input id="animalImage" type="file" accept="image/*" onchange="previewImage(event)">
+                    <img id="imagePreview" style="display:none;width:100%;max-height:250px;object-fit:cover;margin-top:10px">
+                </div>
+                <div class="form-group"><label>Name</label><input id="aName" placeholder="Animal name"></div>
+                <div class="form-group">
+                    <label>Species</label>
+                    <select id="aSpecies">
+                        <option value="Dog">Dog</option>
+                        <option value="Cat">Cat</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Breed</label><input id="aBreed" placeholder="Breed"></div>
+                <div class="form-group">
+                    <label>Size</label>
+                    <select id="aSize">
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Age</label><input id="aAge" type="number" min="0" placeholder="Age in years"></div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select id="aGender">
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                        <option value="Unknown">Unknown</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Description</label><textarea id="aDescription" placeholder="Tell potential adopters about this animal..."></textarea></div>
+                <div class="form-group">
+                    <label>Animal friendly, or lonely wolf?</label>
+                    <select id="pet_animal_friendly">
+                        <option value="yes_all">Yes in love with all other animals</option>
+                        <option value="yes_dogs">Likes dogs</option>
+                        <option value="yes_cats">Likes cats</option>
+                        <option value="no_prefer_single">Stop, this is a lonely wolf ❤️</option>
+                        <option value="unknown">Unknown, to be tested</option>
+                    </select>
+                </div>
+                <button class="primary" onclick="addAnimal()">Publish Animal Profile</button>
+            </div>
+            
+            <div class="animal-admin">
+                <h2>My Published Animals</h2>
+                <div id="adminAnimals"></div>
+            </div>
+        </section>
+
+        <!-- Gallery Modal -->
+        <div id="galleryModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeGallery()">×</span>
+                <h2 id="galleryTitle"></h2>
+                <img id="galleryMain" class="gallery-main" alt="Buddy photo">
+                <p id="galleryDescription"></p>
+                <p id="gallerySource"></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
